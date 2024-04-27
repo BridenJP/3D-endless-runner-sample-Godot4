@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://buyimc8rykscg"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_yr8qg"]
+radius = 0.25
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_obk6e"]
+transparency = 1
+blend_mode = 1
+albedo_color = Color(1, 1, 1, 0.866667)
+emission_enabled = true
+emission = Color(0.415686, 0.305882, 1, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_t4k7r"]
+material = SubResource("StandardMaterial3D_obk6e")
+radius = 0.25
+height = 0.5
+
+[node name="Collectible" type="Area3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_yr8qg")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_t4k7r")

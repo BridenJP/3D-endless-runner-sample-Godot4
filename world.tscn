@@ -1,0 +1,106 @@
+[gd_scene load_steps=7 format=3 uid="uid://fnnrgh54rfam"]
+
+[ext_resource type="Script" path="res://Scripts/player.gd" id="1_5xk0x"]
+[ext_resource type="Script" path="res://Scripts/world.gd" id="1_y2vjw"]
+[ext_resource type="PackedScene" uid="uid://dybop2ilvqyfa" path="res://Assets/Models/3DGodotRobot.glb" id="2_3rivv"]
+[ext_resource type="PackedScene" uid="uid://dyqnlo4b0rx8i" path="res://Objects/track_segment.tscn" id="4_o22v7"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_n2ir1"]
+height = 1.8
+
+[sub_resource type="GDScript" id="GDScript_lneki"]
+script/source = "extends Node3D
+
+#const TRACK_LEN = 100
+#
+## Preload track segment
+#var track_prefab = preload(\"res://track_segment.tscn\")
+#
+#var milestone # next change of track
+#var track_index # which track we will change
+#var tracks # array of tracks
+#var track_z # z pos of next track
+#
+#func reposition_next_track(track: TrackSegment):
+	#track.global_transform.origin.z = track_z
+	#track_z -= TRACK_LEN
+	#track.create_obstacles()
+#
+## Called when the node enters the scene tree for the first time.
+#func _ready():
+	#var track0 = track_prefab.instantiate()
+	#var track1 = track_prefab.instantiate()
+	#tracks = [track0, track1]
+	#add_child(track0)
+	#add_child(track1)
+#
+	#track_z = -TRACK_LEN * 0.5
+	#reposition_next_track(track0)
+	#reposition_next_track(track1)
+#
+#func _process():
+	#if $
+"
+
+[node name="World" type="Node3D"]
+script = ExtResource("1_y2vjw")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+script = ExtResource("1_5xk0x")
+
+[node name="PlayerColl" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_n2ir1")
+
+[node name="PlayerModel" parent="Player" instance=ExtResource("2_3rivv")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, -0.8, 0)
+
+[node name="Skeleton3D" parent="Player/PlayerModel/RobotArmature" index="0"]
+bones/0/position = Vector3(-3.5256e-16, 0.861288, 0.0298551)
+bones/0/rotation = Quaternion(0.0149092, 1.19196e-07, 1.77731e-09, 0.999889)
+bones/1/rotation = Quaternion(0.0294489, -1.52228e-14, 7.02117e-09, 0.999566)
+bones/4/position = Vector3(-3.65722e-16, 0.151501, -0.011741)
+bones/4/rotation = Quaternion(0.00540027, -1.19208e-07, -6.43763e-10, 0.999985)
+bones/5/rotation = Quaternion(0.00821238, -4.94291e-14, -1.95798e-09, 0.999966)
+bones/8/position = Vector3(9.97907e-08, 0.0611572, 0.418552)
+bones/9/rotation = Quaternion(-0.523067, -0.457802, -0.521926, 0.49438)
+bones/10/rotation = Quaternion(-0.356441, 0.617847, -0.433107, 0.551029)
+bones/12/rotation = Quaternion(0.0209349, 0.0170217, -0.0176714, 0.99948)
+bones/13/rotation = Quaternion(-0.523067, 0.457802, 0.521926, 0.49438)
+bones/14/rotation = Quaternion(-0.356441, -0.617847, 0.433107, 0.551029)
+bones/16/rotation = Quaternion(0.0209349, -0.0170217, 0.0176714, 0.99948)
+bones/17/rotation = Quaternion(0.991415, 0.0203396, -0.00748625, 0.128945)
+bones/18/rotation = Quaternion(0.249628, 0.00871771, 0.024974, 0.967981)
+bones/19/rotation = Quaternion(-0.608714, 0.00331542, -0.00479121, 0.793368)
+bones/21/rotation = Quaternion(0.991415, -0.0203396, 0.00748626, 0.128945)
+bones/22/rotation = Quaternion(0.249628, -0.00871766, -0.0249741, 0.967981)
+bones/23/rotation = Quaternion(-0.608714, -0.00331544, 0.00479126, 0.793368)
+
+[node name="Camera" type="Camera3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 3)
+
+[node name="SliderTimer" type="Timer" parent="Player"]
+wait_time = 0.8
+one_shot = true
+
+[node name="RestartTimer" type="Timer" parent="Player"]
+wait_time = 3.0
+one_shot = true
+
+[node name="Tracks" type="Node3D" parent="."]
+script = SubResource("GDScript_lneki")
+
+[node name="TrackSegment1" parent="Tracks" instance=ExtResource("4_o22v7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
+
+[node name="TrackSegment2" parent="Tracks" instance=ExtResource("4_o22v7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -150)
+
+[connection signal="timeout" from="Player/SliderTimer" to="Player" method="_on_slider_timer_timeout"]
+[connection signal="timeout" from="Player/RestartTimer" to="." method="_on_restart_timer_timeout"]
+
+[editable path="Player/PlayerModel"]

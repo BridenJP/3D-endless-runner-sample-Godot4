@@ -1,0 +1,27 @@
+[gd_scene load_steps=7 format=3 uid="uid://bdfvssiwmon0w"]
+
+[ext_resource type="Texture2D" uid="uid://dja4lkxnxr0y6" path="res://Assets/Textures/rust_coarse_01_diff_1k.jpg" id="1_aiqk0"]
+[ext_resource type="Texture2D" uid="uid://dowu0gipumqvw" path="res://Assets/Textures/rust_coarse_01_nor_gl_1k.jpg" id="2_vtp6s"]
+[ext_resource type="Texture2D" uid="uid://c3i1y3vvc5fvc" path="res://Assets/Textures/rust_coarse_01_rough_1k.jpg" id="3_b8vfe"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jaih8"]
+size = Vector3(3.3, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xn7l2"]
+albedo_texture = ExtResource("1_aiqk0")
+roughness_texture = ExtResource("3_b8vfe")
+normal_enabled = true
+normal_texture = ExtResource("2_vtp6s")
+uv1_scale = Vector3(5, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_r71t5"]
+material = SubResource("StandardMaterial3D_xn7l2")
+size = Vector3(3.3, 1, 1)
+
+[node name="BoxObstacle" type="StaticBody3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_jaih8")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_r71t5")
